@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 export function AvailableMoney() {
      const [availableUSD, setAvailableUSD] = useState(0);
      const [availableARS, setAvailableARS] = useState(0);
+     const [ars, setArs] = useState(0)
+     const [usd, setUsd] = useState(0)
      const [fecha, setFecha] = useState(new Date())
      // const [day,setDay]=useState([])
      const getDay = async () => {
@@ -45,6 +47,8 @@ export function AvailableMoney() {
                setAvailableARS(day.monto_maximo_ars);
                setAvailableUSD(day.monto_maximo_usd);
           } else {
+               setAvailableARS(ars);
+               setAvailableUSD(usd);
                insertDay();// lo mandaria a la api     
           }
      }
@@ -69,12 +73,12 @@ export function AvailableMoney() {
 
                          <div>
                               <label htmlFor="availableUSD" className="block text-sm font-medium mb-1">Disponible USD</label>
-                              <input type="number" value={availableUSD} onChange={(e) => setAvailableUSD(e.target.value)} id="availableUSD" className="border p-2 rounded w-full" />
+                              <input type="number" value={usd} onChange={(e) => setUsd(e.target.value)} id="availableUSD" className="border p-2 rounded w-full" />
                          </div>
 
                          <div>
                               <label htmlFor="availableARS" className="block text-sm font-medium mb-1">Disponible ARS</label>
-                              <input type="number" value={availableARS} onChange={(e) => setAvailableARS(e.target.value)} id="availableARS" className="border p-2 rounded w-full" />
+                              <input type="number" value={ars} onChange={(e) => setArs(e.target.value)} id="availableARS" className="border p-2 rounded w-full" />
                          </div>
                          <button onClick={updateAvailableMoney} className="bg-green-600 text-white p-10 px-4 py-2 rounded">Actualizar</button>
                     </form>
