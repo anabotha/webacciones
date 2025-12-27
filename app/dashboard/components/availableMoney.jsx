@@ -22,19 +22,21 @@ export function AvailableMoney() {
           }
      };
 
-     const insertDay = () => {
-
-          //lo deberia mandar a la api
-          const { data: dineroDia, error } = supabase
-               .from("trading_day")
-               .insert({
-                    date: new Date().toISOString(),
+     const insertDay = async () => {
+          const response = await fetch("/api/trading-day", {
+               method: "POST",
+               cache: "no-store",
+               headers: {
+                    "Content-Type": "application/json",
+               },
+               body: JSON.stringify({
                     monto_maximoARS: availableARS,
                     monto_maximoUSD: availableUSD,
-                    monto_usadoARS: 0,
-                    monto_usadoUSD: 0,
-               });
-          return Response.json({ dineroDia, error });
+               }),
+          });
+
+
+          return await response.json();
      }
      const updateAvailableMoney = async () => {
           const day = await getDay();
