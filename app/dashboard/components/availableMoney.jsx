@@ -25,16 +25,16 @@ export function AvailableMoney() {
      const insertDay = () => {
 
           //lo deberia mandar a la api
-          // const { data: dineroDia, error } = supabase
-          //      .from("trading_day")
-          //      .insert({
-          //           date: new Date().toISOString(),
-          //           monto_maximoARS: availableARS,
-          //           monto_maximoUSD: availableUSD,
-          //           monto_usadoARS: 0,
-          //           monto_usadoUSD: 0,
-          //      });
-          // return Response.json({ dineroDia, error });
+          const { data: dineroDia, error } = supabase
+               .from("trading_day")
+               .insert({
+                    date: new Date().toISOString(),
+                    monto_maximoARS: availableARS,
+                    monto_maximoUSD: availableUSD,
+                    monto_usadoARS: 0,
+                    monto_usadoUSD: 0,
+               });
+          return Response.json({ dineroDia, error });
      }
      const updateAvailableMoney = async () => {
           const day = await getDay();
