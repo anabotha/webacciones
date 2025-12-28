@@ -8,7 +8,7 @@ export async function GET() {
      const { data, error } = await supabase
           .from("trading_day")
           .select("*")
-          .eq("estado", "ACTIVE")
+          .eq("fecha", today)
           .limit(1)
           .single();
 
@@ -22,28 +22,34 @@ export async function GET() {
 export async function POST(req: Request) {
      try {
           const {
-               monto_maximoARS,
-               monto_maximoUSD,
+               monto_maximo_ars,
+               monto_maximo_usd,
           } = await req.json();
 
           // Validaciones mínimas
-          if (!monto_maximoARS || !monto_maximoUSD) {
+          if (monto_maximo_ars === undefined || monto_maximo_usd === undefined) {
                return NextResponse.json(
                     { error: "Datos incompletos" },
                     { status: 400 }
                );
           }
-
-          const supabase = await createSupabaseServerClient();
-
-          const { data, error } = await supabase.from("trading_day").insert({
-               monto_maximoARS,
-               monto_maximoUSD,
-               estado: "ACTIVE",
-               monto_usadoARS: 0,
-               monto_usadoUSD: 0,
-               fecha: new Date().toISOString(),
-          });
+          const { data, error } = await supabase
+               .from("trading_day")
+               .upsert(
+                    {
+                         fecha: new Date().toISOString().split("T")[0],
+                         monto_maximo_ars: monto_maximo_ars,
+                         monto_maximo_usd: monto_maximo_usd,
+                         estado: "ACTIVE",
+                         monto_usado_ars: 0,
+                         monto_usado_usd: 0,
+                    },
+                    {
+                         onConflict: "fecha",
+                    }
+               )
+               .select()
+               .single();
 
           if (error) {
                return NextResponse.json(
@@ -60,3 +66,44 @@ export async function POST(req: Request) {
           );
      }
 }
+// export async function POST(req: Request) {
+//      try {
+//           const {
+//                monto_maximo_ars,
+//                monto_maximo_usd,
+//           } = await req.json();
+
+//           // Validaciones mínimas
+//           if (monto_maximo_ars === undefined || monto_maximo_usd === undefined) {
+//                return NextResponse.json(
+//                     { error: "Datos incompletos" },
+//                     { status: 400 }
+//                );
+//           }
+
+//           const supabase = await createSupabaseServerClient();
+
+//           const { data, error } = await supabase.from("trading_day").insert({
+//                monto_maximo_ars: Number(monto_maximo_ars),
+//                monto_maximo_usd: Number(monto_maximo_usd),
+//                estado: "ACTIVE",
+//                monto_usado_ars: 0,
+//                monto_usado_usd: 0,
+//                fecha: new Date().toISOString().split("T")[0],
+//           });
+
+//           if (error) {
+//                return NextResponse.json(
+//                     { error: error.message },
+//                     { status: 500 }
+//                );
+//           }
+
+//           return NextResponse.json({ success: true, data });
+//      } catch {
+//           return NextResponse.json(
+//                { error: "Body inválido" },
+//                { status: 400 }
+//           );
+//      }
+// }

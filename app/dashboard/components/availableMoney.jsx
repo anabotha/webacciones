@@ -25,6 +25,7 @@ export function AvailableMoney() {
      };
 
      const insertDay = async () => {
+          console.log("insertdar", availableARS, availableUSD)
           const response = await fetch("/api/trading-day", {
                method: "POST",
                cache: "no-store",
@@ -32,8 +33,8 @@ export function AvailableMoney() {
                     "Content-Type": "application/json",
                },
                body: JSON.stringify({
-                    monto_maximoARS: availableARS,
-                    monto_maximoUSD: availableUSD,
+                    monto_maximo_ars: availableARS,
+                    monto_maximo_usd: availableUSD,
                }),
           });
 
@@ -46,6 +47,8 @@ export function AvailableMoney() {
           if (day) {
                setAvailableARS(day.monto_maximo_ars);
                setAvailableUSD(day.monto_maximo_usd);
+               setArs(day.monto_maximo_ars);
+               setUsd(day.monto_maximo_usd);
           } else {
                setAvailableARS(ars);
                setAvailableUSD(usd);
@@ -60,7 +63,7 @@ export function AvailableMoney() {
      return (
 
           <div className="flex flex-col items-center justify-center container gap-4 p-10">
-               {(availableARS && availableUSD) ? <>
+               {(availableARS >= 0 && availableUSD >= 0) ? <>
                     <h1 className="text-lg font-semibold">Disponible USD: {availableUSD}</h1>
                     <h1 className="text-lg font-semibold">Disponible ARS: {availableARS}</h1>
                     <h2 className="text-lg text-gray-200">Mañana deberas volver a ingresar el disponible</h2>
@@ -71,14 +74,16 @@ export function AvailableMoney() {
                               <h4 className="text-sm text-gray-500">{fecha.getDate()}/{fecha.getMonth() + 1}/{fecha.getFullYear()}</h4>
                          </div>
 
-                         <div>
+                         <div className="flex flex-row gap-2 mt-1">
                               <label htmlFor="availableUSD" className="block text-sm font-medium mb-1">Disponible USD</label>
-                              <input type="number" value={usd} onChange={(e) => setUsd(e.target.value)} id="availableUSD" className="border p-2 rounded w-full" />
+                              <input type="number"
+                                   className="bg-black text-white border border-gray-700 p-2 rounded w-full flex-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500"
+                                   value={usd} onChange={(e) => setUsd(e.target.value)} id="availableUSD" />
                          </div>
 
-                         <div>
+                         <div className="flex flex-row gap-2 mt-1">
                               <label htmlFor="availableARS" className="block text-sm font-medium mb-1">Disponible ARS</label>
-                              <input type="number" value={ars} onChange={(e) => setArs(e.target.value)} id="availableARS" className="border p-2 rounded w-full" />
+                              <input type="number" value={ars} onChange={(e) => setArs(e.target.value)} id="availableARS" className="bg-black text-white border border-gray-700 p-2 rounded w-full flex-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" />
                          </div>
                          <button onClick={updateAvailableMoney} className="bg-green-600 text-white p-10 px-4 py-2 rounded">Actualizar</button>
                     </form>
