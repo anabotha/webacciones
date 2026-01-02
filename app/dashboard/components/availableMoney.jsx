@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 export function AvailableMoney() {
      const [availableUSD, setAvailableUSD] = useState(0);
      const [availableARS, setAvailableARS] = useState(0);
-     const [ars, setArs] = useState(0)
-     const [usd, setUsd] = useState(0)
+     const [ars, setArs] = useState(null)
+     const [usd, setUsd] = useState(null)
      const [fecha, setFecha] = useState(new Date())
      // const [day,setDay]=useState([])
      const getDay = async () => {
@@ -44,7 +44,7 @@ export function AvailableMoney() {
      const updateAvailableMoney = async () => {
           const day = await getDay();
           console.log(day);
-          if (day) {
+          if (day != null) {
                setAvailableARS(day.monto_maximo_ars);
                setAvailableUSD(day.monto_maximo_usd);
                setArs(day.monto_maximo_ars);
