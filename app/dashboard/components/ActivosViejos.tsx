@@ -48,12 +48,12 @@ export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
                {activosViejos.length === 0 && <p className="text-gray-500">No hay activos registrados.</p>}
                {activosViejos.map((activo, index) => (
                     <div key={index} className="grid grid-cols-5 gap-2 border-b py-2">
-                         <p className="font-semibold">{activo.operacion}</p>
-                         <p>{activo.activo}</p>
-                         <p>{activo.tipo_activo}</p>
-                         <p>{activo.precio}</p>   
-                         <p>{activo.cantidad}</p>
-                         <p>{activo.mercado}</p>
+                         <p className="font-semibold text-gray-700">{activo.operacion}</p>
+                         <p className="text-gray-500">{activo.activo}</p>
+                         <p className="text-gray-500">{activo.tipo_activo}</p>
+                         <p className="text-gray-500">{activo.precio}</p>   
+                         <p className="text-gray-500">{activo.cantidad}</p>
+                         <p className="text-gray-500">{activo.mercado}</p>
                     </div>
                ))
           }
