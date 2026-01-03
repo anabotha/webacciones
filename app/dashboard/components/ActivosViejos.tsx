@@ -51,7 +51,6 @@ export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
                          <table className="min-w-full bg-white border border-gray-200">
                               <thead className="bg-gray-50 border-b">
                                    <tr>
-                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operación</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activo</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Promedio</th>
@@ -62,7 +61,6 @@ export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
                               <tbody className="divide-y divide-gray-200">
                                    {activosViejos.map((activo, index) => (
                                         <tr key={index}>
-                                             <td className="px-4 py-2 whitespace-nowrap text-sm font-semibold text-gray-700">{activo.operacion}</td>
                                              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activo.activo}</td>
                                              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activo.tipo_activo}</td>
                                              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activo.costo_promedio}</td>
