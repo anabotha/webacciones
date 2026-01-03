@@ -7,7 +7,7 @@ interface activeType {
      tipo_activo: string;
      costo_promedio: number;
      cantidad_total: number;
-     mercado: string;
+     mercado?: string;
      updated_at: Date;
 }
 export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
@@ -46,17 +46,35 @@ export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
                <div className="mt-4 border p-4 rounded bg-gray-100">
                <h3 className="font-bold text-lg text-black">Activos anteriores</h3>
                {activosViejos.length === 0 && <p className="text-gray-500">No hay activos registrados.</p>}
-               {activosViejos.map((activo, index) => (
-                    <div key={index} className="grid grid-cols-5 gap-2 border-b py-2">
-                         <p className="font-semibold text-gray-700">{activo.operacion}</p>
-                         <p className="text-gray-500">{activo.activo}</p>
-                         <p className="text-gray-500">{activo.tipo_activo}</p>
-                         <p className="text-gray-500">{activo.costo_promedio}</p>   
-                         <p className="text-gray-500">{activo.cantidad_total}</p>
-                         <p className="text-gray-500">{activo.mercado}</p>
+               {activosViejos.length > 0 && (
+                    <div className="overflow-x-auto mt-4">
+                         <table className="min-w-full bg-white border border-gray-200">
+                              <thead className="bg-gray-50 border-b">
+                                   <tr>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operación</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activo</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Promedio</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mercado</th>
+                                   </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-200">
+                                   {activosViejos.map((activo, index) => (
+                                        <tr key={index}>
+                                             <td className="px-4 py-2 whitespace-nowrap text-sm font-semibold text-gray-700">{activo.operacion}</td>
+                                             <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activo.activo}</td>
+                                             <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activo.tipo_activo}</td>
+                                             <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activo.costo_promedio}</td>
+                                             <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activo.cantidad_total}</td>
+                                             <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activo.mercado}</td>
+                                        </tr>
+                                   ))}
+                              </tbody>
+                         </table>
                     </div>
-               ))
-          }
+               )}
+          
 
           </div>
 
