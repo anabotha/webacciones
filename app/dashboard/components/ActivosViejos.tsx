@@ -54,7 +54,7 @@ export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
                          <p>{activo.precio}</p>   
                          <p>{activo.cantidad}</p>
                          <p>{activo.mercado}</p>
-                         <p>{activo.fecha.toString()}</p>
+                         <p>{activo.fecha}</p>
                     </div>
                ))
           }
