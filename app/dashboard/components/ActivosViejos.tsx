@@ -8,7 +8,7 @@ interface activeType {
      precio: number;
      cantidad: number;
      mercado: string;
-     fecha: Date;
+     updated_at: Date;
 }
 export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
      //conexion a bd para traer los activos viejos
@@ -54,7 +54,6 @@ export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
                          <p>{activo.precio}</p>   
                          <p>{activo.cantidad}</p>
                          <p>{activo.mercado}</p>
-                         <p>{activo.fecha}</p>
                     </div>
                ))
           }
