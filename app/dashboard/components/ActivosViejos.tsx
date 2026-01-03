@@ -5,8 +5,8 @@ interface activeType {
      operacion:string;
      activo: string;
      tipo_activo: string;
-     precio: number;
-     cantidad: number;
+     costo_promedio: number;
+     cantidad_total: number;
      mercado: string;
      updated_at: Date;
 }
@@ -51,8 +51,8 @@ export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
                          <p className="font-semibold text-gray-700">{activo.operacion}</p>
                          <p className="text-gray-500">{activo.activo}</p>
                          <p className="text-gray-500">{activo.tipo_activo}</p>
-                         <p className="text-gray-500">{activo.precio}</p>   
-                         <p className="text-gray-500">{activo.cantidad}</p>
+                         <p className="text-gray-500">{activo.costo_promedio}</p>   
+                         <p className="text-gray-500">{activo.cantidad_total}</p>
                          <p className="text-gray-500">{activo.mercado}</p>
                     </div>
                ))
