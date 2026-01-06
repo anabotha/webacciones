@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const res = await fetch(
-    // "https://tu-api.onrender.com/api/jobs/evaluar",
+    "https://api-inversiones.onrender.com/api/jobs/evaluar",
     {
       method: "POST",
       headers: {
@@ -13,5 +13,4 @@ export async function GET() {
   );
 
   return Response.json({ ok: res.ok });
-console.log("ana")
 }
