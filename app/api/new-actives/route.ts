@@ -8,7 +8,8 @@ const ALLOWED_TIPO_ACTIVO = [
   "COMMON_STOCK",
   "CEDEAR",
   "ACCION",
-  "BONO"
+  "BONO",
+  "LETRA"
 ];
 
 export async function POST(req: Request) {
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
       source
     } = body;
 
-    // 1️⃣ Validaciones mínimas
+    // Validaciones mínimas
     if (
       !trading_day_id ||
       !activo ||
@@ -41,14 +42,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2️⃣ Normalizar valores
+    // Normalizar valores
     const normalizedTipo = tipo.toUpperCase();
 
     const resolvedTipoActivo = tipo_activo
       ? tipo_activo.toUpperCase()
       : DEFAULT_TIPO_ACTIVO;
 
-    // 3️⃣ Validar ENUM
+    // Validar ENUM
     if (!ALLOWED_TIPO_ACTIVO.includes(resolvedTipoActivo)) {
       return NextResponse.json(
         { error: "tipo_activo inválido" },
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 4️⃣ Insert seguro
+    //  Insert seguro
     const { data, error } = await supabase
       .from("operations")
       .insert({

@@ -133,10 +133,12 @@ if (!payload.activo || !payload.tipo || !payload.cantidad || !payload.precio || 
                               </Select.Trigger>
                               <Select.Content className="bg-black border border-gray-700 rounded text-white z-50">
                                    <Select.Viewport>
-                                        <Select.Item value="acciones" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Acciones</Select.ItemText></Select.Item>
-                                        <Select.Item value="etf" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>ETF</Select.ItemText></Select.Item>
-                                        <Select.Item value="bonos" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Bonos</Select.ItemText></Select.Item>
-                                        <Select.Item value="cedears" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Cedears</Select.ItemText></Select.Item>
+                                        <Select.Item value="ACCIONES" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Acciones</Select.ItemText></Select.Item>
+                                        <Select.Item value="LETRAS" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Letras</Select.ItemText></Select.Item>
+                                        <Select.Item value="COMMON_STOCK" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Common Stock</Select.ItemText></Select.Item>
+                                        <Select.Item value="ETF" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>ETF</Select.ItemText></Select.Item>
+                                        <Select.Item value="BONOS" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Bonos</Select.ItemText></Select.Item>
+                                        <Select.Item value="CEDEARS" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Cedears</Select.ItemText></Select.Item>
                                    </Select.Viewport>
                               </Select.Content>
                          </Select.Root>
