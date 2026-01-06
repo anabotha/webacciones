@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const {
-      trading_day_id,
       activo,
       tipo,           // BUY | SELL | HOLD
       tipo_activo,    // enum
@@ -15,7 +14,6 @@ export async function POST(req: Request) {
     } = await req.json();
 
     if (
-      !trading_day_id ||
       !activo ||
       !tipo ||
       !cantidad ||
@@ -28,18 +26,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const total = cantidad * precio;
-
     const { data, error } = await supabase
       .from("operations")
       .insert({
-        trading_day_id,
         activo,
         tipo,
         tipo_activo,
         cantidad,
         precio,
-        total,
         moneda,
         source,
         fecha: new Date().toISOString()
