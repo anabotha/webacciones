@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from "react";
-// import { ActivosViejos } from "./ActivosViejos";
 import * as Select from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
 
@@ -28,23 +27,53 @@ export function Actives() {
 const [mercado, setMercado] = useState(["ARGENTINA", "USA", "BRASIL", "JAPON", "CHINA"]);
 
      useEffect(() => {
-          // updateActives();
           setActualizar(true);
+          updateActives();
      }, [activeList]);
 
-     const updateActives = () => {
+const updateActives = () => {
   setActiveList([
     ...activeList,
     {
       ...form,
+      mercado: form.mercado,
       precio: Number(form.precio),
       cantidad: Number(form.cantidad),
       fecha: fecha
     },
   ]);
 
+     saveOperation();
   //aca iria un post a la api del bot
 };
+
+const saveOperation = async () => {
+          try {
+               const response = await fetch("/api/new-actives", {
+                    method: "POST",
+                    cache: "no-store",
+                    headers: {
+                         "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                            operacion: activeList[activeList.length - 1].operacion,
+                            activo: activeList[activeList.length - 1].activo,
+                            tipo_activo: activeList[activeList.length - 1].tipo_activo,
+                            precio: activeList[activeList.length - 1].precio,
+                            cantidad: activeList[activeList.length - 1].cantidad,
+                            mercado: activeList[activeList.length - 1].mercado
+                            
+                    }),
+               });
+
+               if (!response.ok) throw new Error("Error al guardar");
+
+               return await response.json();
+          } catch (error) {
+               console.error(error);
+               return null;
+          }
+     }
 
      return (
           <div className="text-white">
