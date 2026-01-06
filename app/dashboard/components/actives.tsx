@@ -1,79 +1,88 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as Select from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
 
 interface activeType {
-     operacion: string;
-     activo: string;
-     tipo_activo: string;
-     precio: number;
-     cantidad: number;
-     mercado: string;
-     fecha: Date;
+           operacion: string;
+           activo: string;
+           tipo_activo: string;
+           precio: number;
+           cantidad: number;
+           mercado?: string;
+           moneda?: string;
+           fecha: Date;
 } 
 export function Actives() {
      const [activeList, setActiveList] = useState<activeType[]>([]);
-     const [fecha, setFecha] = useState(new Date());
-     const [actualizar, setActualizar] = useState(false);
-     const [form, setForm] = useState({
-  operacion: "",
-  activo: "",
-  tipo_activo: "",
-  precio: "",
-  cantidad: "",
-  mercado: ""
+           const [fecha] = useState(new Date());
+           const [form, setForm] = useState({
+     operacion: "",
+     activo: "",
+     tipo_activo: "",
+     precio: "",
+     cantidad: "",
+     mercado: "",
+     moneda: "ARS"
 });
 const [mercado, setMercado] = useState(["ARGENTINA", "USA", "BRASIL", "JAPON", "CHINA"]);
 
-     useEffect(() => {
-          setActualizar(true);
-          updateActives();
-     }, [activeList]);
+const updateActives = async () => {
+     const payload = {
+          trading_day_id: 1,
+          activo: form.activo,
+          tipo: form.operacion, // BUY | SELL | HOLD
+          tipo_activo: form.tipo_activo,
+          cantidad: Number(form.cantidad),
+          precio: Number(form.precio),
+          moneda: form.moneda || form.mercado || "ARS",
+          source: "web"
+     };
 
-const updateActives = () => {
-  setActiveList([
-    ...activeList,
-    {
-      ...form,
-      mercado: form.mercado,
-      precio: Number(form.precio),
-      cantidad: Number(form.cantidad),
-      fecha: fecha
-    },
-  ]);
-
-     saveOperation();
-  //aca iria un post a la api del bot
-};
-
-const saveOperation = async () => {
-          try {
-               const response = await fetch("/api/new-actives", {
-                    method: "POST",
-                    cache: "no-store",
-                    headers: {
-                         "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                            operacion: activeList[activeList.length - 1].operacion,
-                            activo: activeList[activeList.length - 1].activo,
-                            tipo_activo: activeList[activeList.length - 1].tipo_activo,
-                            precio: activeList[activeList.length - 1].precio,
-                            cantidad: activeList[activeList.length - 1].cantidad,
-                            mercado: activeList[activeList.length - 1].mercado
-                            
-                    }),
-               });
-
-               if (!response.ok) throw new Error("Error al guardar");
-
-               return await response.json();
-          } catch (error) {
-               console.error(error);
-               return null;
-          }
+     if (!payload.activo || !payload.tipo || !payload.cantidad || !payload.precio || !payload.moneda) {
+          alert("Faltan campos requeridos");
+          return;
      }
+
+     try {
+          const res = await fetch("/api/new-actives", {
+               method: "POST",
+               cache: "no-store",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+               const err = await res.json().catch(() => ({}));
+               console.error("Error guardando:", err);
+               alert("Error al guardar la operación");
+               return;
+          }
+
+          const data = await res.json();
+
+          setActiveList(prev => [
+               ...prev,
+               {
+                    operacion: payload.tipo,
+                    activo: payload.activo,
+                    tipo_activo: payload.tipo_activo,
+                    precio: payload.precio,
+                    cantidad: payload.cantidad,
+                    mercado: form.mercado,
+                    moneda: payload.moneda,
+                    fecha: fecha,
+               },
+          ]);
+
+          // limpiar formulario
+          setForm({ operacion: "", activo: "", tipo_activo: "", precio: "", cantidad: "", mercado: "", moneda: "ARS" });
+
+     } catch (error) {
+          console.error(error);
+          alert("Error en la petición");
+     }
+};
 
      return (
           <div className="text-white">
@@ -137,7 +146,7 @@ const saveOperation = async () => {
                                   onChange={(e)=>setForm({...form, precio: e.target.value})} 
                               />
                               <div className="w-32">
-                               <Select.Root defaultValue="ARS">
+                               <Select.Root defaultValue="ARS" onValueChange={(val) => setForm({...form, moneda: val})}>
                                     <Select.Trigger className="bg-black text-white border border-gray-700 px-4 py-2 rounded flex items-center justify-between w-full h-full hover:bg-gray-900 transition">
                                          <Select.Value />
                                          <ChevronDown size={16} />
