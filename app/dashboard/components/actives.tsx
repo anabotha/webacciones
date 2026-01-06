@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as Select from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
 
@@ -16,6 +16,7 @@ interface activeType {
 export function Actives() {
      const [activeList, setActiveList] = useState<activeType[]>([]);
            const [fecha] = useState(new Date());
+           const [tradingDayId, setTradingDayId] = useState<number | null>(null);
            const [form, setForm] = useState({
      operacion: "",
      activo: "",
@@ -27,9 +28,24 @@ export function Actives() {
 });
 const [mercado, setMercado] = useState(["ARGENTINA", "USA", "BRASIL", "JAPON", "CHINA"]);
 
+useEffect(() => {
+  const fetchTradingDay = async () => {
+    try {
+      const res = await fetch("/api/trading-day");
+      const data = await res.json();
+      if (data?.id) {
+        setTradingDayId(data.id);
+      }
+    } catch (error) {
+      console.error("Error obteniendo trading day:", error);
+    }
+  };
+  fetchTradingDay();
+}, []);
+
 const updateActives = async () => {
      const payload = {
-          trading_day_id: 1,
+          trading_day_id: tradingDayId,
           activo: form.activo,
           tipo: form.operacion, // BUY | SELL | HOLD
           tipo_activo: form.tipo_activo,
@@ -39,8 +55,8 @@ const updateActives = async () => {
           source: "web"
      };
 
-     if (!payload.activo || !payload.tipo || !payload.cantidad || !payload.precio || !payload.moneda) {
-          alert("Faltan campos requeridos");
+if (!payload.activo || !payload.tipo || !payload.cantidad || !payload.precio || !payload.moneda || !payload.trading_day_id) {
+    alert("Faltan campos requeridos o trading day no cargado");
           return;
      }
 
