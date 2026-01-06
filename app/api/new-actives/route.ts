@@ -1,21 +1,34 @@
 import { supabase } from "../../lib/supabase/client";
 import { NextResponse } from "next/server";
 
+const DEFAULT_TIPO_ACTIVO = "COMMON_STOCK";
+
+const ALLOWED_TIPO_ACTIVO = [
+  "ETF",
+  "COMMON_STOCK",
+  "CEDEAR",
+  "ACCION",
+  "BONO"
+];
+
 export async function POST(req: Request) {
   try {
+    const body = await req.json();
+
     const {
-     trading_day_id,
+      trading_day_id,
       activo,
-      tipo,           // BUY | SELL | HOLD
-      tipo_activo,    // enum
+      tipo,          // BUY | SELL | HOLD
+      tipo_activo,   // ENUM
       cantidad,
       precio,
       moneda,
       source
-    } = await req.json();
+    } = body;
 
+    // 1️⃣ Validaciones mínimas
     if (
-     !trading_day_id ||
+      !trading_day_id ||
       !activo ||
       !tipo ||
       !cantidad ||
@@ -28,13 +41,29 @@ export async function POST(req: Request) {
       );
     }
 
+    // 2️⃣ Normalizar valores
+    const normalizedTipo = tipo.toUpperCase();
+
+    const resolvedTipoActivo = tipo_activo
+      ? tipo_activo.toUpperCase()
+      : DEFAULT_TIPO_ACTIVO;
+
+    // 3️⃣ Validar ENUM
+    if (!ALLOWED_TIPO_ACTIVO.includes(resolvedTipoActivo)) {
+      return NextResponse.json(
+        { error: "tipo_activo inválido" },
+        { status: 400 }
+      );
+    }
+
+    // 4️⃣ Insert seguro
     const { data, error } = await supabase
       .from("operations")
       .insert({
-            trading_day_id,
+        trading_day_id,
         activo,
-        tipo,
-        tipo_activo,
+        tipo: normalizedTipo,
+        tipo_activo: resolvedTipoActivo,
         cantidad,
         precio,
         moneda,
@@ -53,7 +82,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, data });
 
-  } catch {
+  } catch (err) {
     return NextResponse.json(
       { error: "Body inválido" },
       { status: 400 }
