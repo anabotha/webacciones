@@ -114,10 +114,10 @@ if (!payload.activo || !payload.tipo || !payload.cantidad || !payload.precio || 
                               </Select.Trigger>
                               <Select.Content className="bg-black border border-gray-700 rounded text-white z-50">
                                    <Select.Viewport>
-                                        <Select.Item value="compra" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none">
+                                        <Select.Item value="BUY" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none">
                                              <Select.ItemText>Compra</Select.ItemText>
                                         </Select.Item>
-                                        <Select.Item value="venta" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none">
+                                        <Select.Item value="SELL" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none">
                                              <Select.ItemText>Venta</Select.ItemText>
                                         </Select.Item>
                                    </Select.Viewport>
