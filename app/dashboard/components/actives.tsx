@@ -108,7 +108,6 @@ const updateActives = async () => {
           alert("Error en la petición");
      }
 
-     setForm({ operacion: "", activo: "", tipo_activo: "", precio: "", cantidad: "", mercado: "", moneda: "ARS" });
 };
      return (
           <div className="text-white">
