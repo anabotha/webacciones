@@ -55,10 +55,19 @@ const updateActives = async () => {
           source: "web"
      };
 
-if (!payload.activo || !payload.tipo || !payload.cantidad || !payload.precio || !payload.moneda || !payload.trading_day_id) {
+const isInvalid = 
+     !payload.activo || 
+     !payload.tipo || 
+     !payload.trading_day_id || 
+     !payload.moneda ||
+     isNaN(payload.cantidad) || payload.cantidad <= 0 || 
+     isNaN(payload.precio) || payload.precio <= 0;
+
+if (isInvalid) {
+    console.log("Datos enviados:", payload); // Esto te dirá qué campo exacto falta
     alert("Faltan campos requeridos o trading day no cargado");
-          return;
-     }
+    return;
+}
 
      try {
           const res = await fetch("/api/new-actives", {
@@ -133,7 +142,7 @@ if (!payload.activo || !payload.tipo || !payload.cantidad || !payload.precio || 
                               </Select.Trigger>
                               <Select.Content className="bg-black border border-gray-700 rounded text-white z-50">
                                    <Select.Viewport>
-                                        <Select.Item value="ACCIONES" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Acciones</Select.ItemText></Select.Item>
+                                        <Select.Item value="ACCION" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Acciones</Select.ItemText></Select.Item>
                                         <Select.Item value="LETRAS" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Letras</Select.ItemText></Select.Item>
                                         <Select.Item value="COMMON_STOCK" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>Common Stock</Select.ItemText></Select.Item>
                                         <Select.Item value="ETF" className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none"><Select.ItemText>ETF</Select.ItemText></Select.Item>

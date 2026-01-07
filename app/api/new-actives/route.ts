@@ -3,15 +3,6 @@ import { NextResponse } from "next/server";
 
 const DEFAULT_TIPO_ACTIVO = "COMMON_STOCK";
 
-const ALLOWED_TIPO_ACTIVO = [
-  "ETF",
-  "COMMON_STOCK",
-  "CEDEAR",
-  "ACCION",
-  "BONO",
-  "LETRAS"
-];
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -45,17 +36,6 @@ export async function POST(req: Request) {
     // Normalizar valores
     const normalizedTipo = tipo.toUpperCase();
 
-//     const resolvedTipoActivo = tipo_activo
-//       ? tipo_activo.toUpperCase()
-//       : DEFAULT_TIPO_ACTIVO;
-
-//     // Validar ENUM
-//     if (!ALLOWED_TIPO_ACTIVO.includes(resolvedTipoActivo)) {
-//       return NextResponse.json(
-//         { error: "tipo_activo inválido" },
-//         { status: 400 }
-//       );
-//     }
 console.log(trading_day_id, activo, normalizedTipo, tipo_activo, cantidad, precio, moneda, source);
     //  Insert seguro
     const { data, error } = await supabase
