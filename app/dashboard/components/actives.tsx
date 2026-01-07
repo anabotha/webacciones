@@ -102,7 +102,7 @@ const updateActives = async () => {
 
           // limpiar formulario
           setForm({ operacion: "", activo: "", tipo_activo: "", precio: "", cantidad: "", mercado: "", moneda: "ARS" });
-
+alert("¡Operacion cargada con exito!");
      } catch (error) {
           console.error(error);
           alert("Error en la petición");
