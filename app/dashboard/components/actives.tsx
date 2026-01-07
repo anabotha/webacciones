@@ -55,19 +55,19 @@ const updateActives = async () => {
           source: "web"
      };
 
-const isInvalid = 
-     !payload.activo || 
-     !payload.tipo || 
-     !payload.trading_day_id || 
-     !payload.moneda ||
-     isNaN(payload.cantidad) || payload.cantidad <= 0 || 
-     isNaN(payload.precio) || payload.precio <= 0;
+// const isInvalid = 
+//      !payload.activo || 
+//      !payload.tipo || 
+//      !payload.trading_day_id || 
+//      !payload.moneda ||
+//      isNaN(payload.cantidad) || payload.cantidad <= 0 || 
+//      isNaN(payload.precio) || payload.precio <= 0;
 
-if (isInvalid) {
-    console.log("Datos enviados:", payload); // Esto te dirá qué campo exacto falta
-    alert("Faltan campos requeridos o trading day no cargado");
-    return;
-}
+// if (isInvalid) {
+//     console.log("Datos enviados:", payload); // Esto te dirá qué campo exacto falta
+//     alert("Faltan campos requeridos o trading day no cargado");
+//     return;
+// }
 
      try {
           const res = await fetch("/api/new-actives", {
