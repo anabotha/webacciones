@@ -107,8 +107,9 @@ if (isInvalid) {
           console.error(error);
           alert("Error en la petición");
      }
-};
 
+     setForm({ operacion: "", activo: "", tipo_activo: "", precio: "", cantidad: "", mercado: "", moneda: "ARS" });
+};
      return (
           <div className="text-white">
                <h3 className="text-xl font-bold mb-2">Ingrese los cambios en los activos</h3>
