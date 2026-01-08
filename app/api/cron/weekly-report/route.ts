@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     // 3. Enviar el Email con los datos recibidos
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'Trading Bot <onboarding@resend.dev>', 
-      to: ['josefinabotha@gmail.com.com'],
+      to: ['mauriciobarraa41@gmail.com'],
       subject: `📊 Reporte Semanal: ${report.rendimiento >= 0 ? 'Ganancia' : 'Pérdida'} del ${report.rendimiento.toFixed(2)}%`,
       html: `
         <h1>Resumen Semanal de Trading</h1>
