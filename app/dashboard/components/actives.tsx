@@ -134,7 +134,7 @@ alert("¡Operacion cargada con exito!");
                          </Select.Root>
                     </div>
                     <div>
-                         <label htmlFor="tipo_activo" className="block text-sm font-medium mb-2">tipo_activo</label>
+                         <label htmlFor="tipo_activo" className="block text-sm font-medium mb-2">Tipo Activo</label>
                          <Select.Root onValueChange={(val) => setForm({...form, tipo_activo: val})}>
                               <Select.Trigger className="bg-black text-white border border-gray-700 px-4 py-2 rounded flex items-center justify-between w-full hover:bg-gray-900 transition mt-1">
                                    <Select.Value placeholder="Seleccionar" />
@@ -189,7 +189,7 @@ alert("¡Operacion cargada con exito!");
                          </div>
                     </div>
                     <div>
-                         <label htmlFor="cantidad" className="block text-sm font-medium mb-2">Cantidad</label>
+                         <label htmlFor="cantidad" className="block text-sm font-medium mb-2">Cantidad de activos</label>
                          <input 
                              type="number" 
                              placeholder="Cantidad" 
