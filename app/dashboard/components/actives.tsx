@@ -192,10 +192,10 @@ alert("¡Operacion cargada con exito!");
                          </div>
                     </div>
                     <div>
-                         <label htmlFor="cantidad" className="block text-sm font-medium mb-2">Cantidad de activos</label>
+                         <label htmlFor="cantidad" className="block text-sm font-medium mb-2">Cantidad de dinero invertido</label>
                          <input 
                              type="number" 
-                             placeholder="Cantidad" 
+                             placeholder="45000" 
                              id="cantidad" 
                              value={form.cantidad}
                              className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" 
