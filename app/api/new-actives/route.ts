@@ -15,7 +15,8 @@ export async function POST(req: Request) {
       cantidad,
       precio,
       moneda,
-      source
+      source,
+      mercado
     } = body;
 
     // Validaciones mínimas
@@ -49,7 +50,8 @@ console.log(trading_day_id, activo, normalizedTipo, tipo_activo, cantidad, preci
         precio,
         moneda,
         source,
-        fecha: new Date().toISOString()
+        fecha: new Date().toISOString(),
+        mercado,
       })
       .select()
       .single();

@@ -12,6 +12,7 @@ interface activeType {
            mercado?: string;
            moneda?: string;
            fecha: Date;
+           mercado:string;
 } 
 export function Actives() {
      const [activeList, setActiveList] = useState<activeType[]>([]);
@@ -52,7 +53,8 @@ const updateActives = async () => {
           cantidad: Number(form.cantidad),
           precio: Number(form.precio),
           moneda: form.moneda || form.mercado || "ARS",
-          source: "web"
+          source: "web",
+          mercado:form.mercado,
      };
 
 // const isInvalid = 
@@ -97,6 +99,7 @@ const updateActives = async () => {
                     mercado: form.mercado,
                     moneda: payload.moneda,
                     fecha: fecha,
+                    mercado: form.mercado,
                },
           ]);
 
