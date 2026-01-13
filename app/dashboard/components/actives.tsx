@@ -117,7 +117,7 @@ alert("¡Operacion cargada con exito!");
                <div className="flex flex-col gap-6 py-4">
                     <div>
                          <label htmlFor="operacion" className="block text-sm font-medium mb-2">Operacion</label>
-                         <Select.Root onValueChange={(val) => setForm({...form, operacion: val})}>
+                         <Select.Root value={form.operacion} onValueChange={(val) => setForm({...form, operacion: val})}>
                               <Select.Trigger className="bg-black text-white border border-gray-700 px-4 py-2 rounded flex items-center justify-between w-full hover:bg-gray-900 transition mt-1">
                                    <Select.Value placeholder="Seleccionar" />
                                    <ChevronDown size={16} />
@@ -136,7 +136,7 @@ alert("¡Operacion cargada con exito!");
                     </div>
                     <div>
                          <label htmlFor="tipo_activo" className="block text-sm font-medium mb-2">Tipo Activo</label>
-                         <Select.Root onValueChange={(val) => setForm({...form, tipo_activo: val})}>
+                         <Select.Root value={form.tipo_activo} onValueChange={(val) => setForm({...form, tipo_activo: val})}>
                               <Select.Trigger className="bg-black text-white border border-gray-700 px-4 py-2 rounded flex items-center justify-between w-full hover:bg-gray-900 transition mt-1">
                                    <Select.Value placeholder="Seleccionar" />
                                    <ChevronDown size={16} />
@@ -159,6 +159,7 @@ alert("¡Operacion cargada con exito!");
                              type="text" 
                              placeholder="APPL" 
                              id="activo" 
+                             value={form.activo}
                              className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500"
                              onChange={(e)=>setForm({...form, activo: e.target.value})} 
                          />
@@ -170,11 +171,12 @@ alert("¡Operacion cargada con exito!");
                                   type="number" 
                                   placeholder="Precio" 
                                   id="precio" 
+                                  value={form.precio}
                                   className="bg-black text-white border border-gray-700 p-2 rounded w-full flex-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" 
                                   onChange={(e)=>setForm({...form, precio: e.target.value})} 
                               />
                               <div className="w-32">
-                               <Select.Root defaultValue="ARS" onValueChange={(val) => setForm({...form, moneda: val})}>
+                               <Select.Root value={form.moneda} onValueChange={(val) => setForm({...form, moneda: val})}>
                                     <Select.Trigger className="bg-black text-white border border-gray-700 px-4 py-2 rounded flex items-center justify-between w-full h-full hover:bg-gray-900 transition">
                                          <Select.Value />
                                          <ChevronDown size={16} />
@@ -195,13 +197,14 @@ alert("¡Operacion cargada con exito!");
                              type="number" 
                              placeholder="Cantidad" 
                              id="cantidad" 
+                             value={form.cantidad}
                              className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" 
                              onChange={(e)=>setForm({...form, cantidad: e.target.value})} 
                          />
                     </div>
                     <div>
                          <label htmlFor="mercado" className="block text-sm font-medium mb-2">Mercado</label>
-                         <Select.Root onValueChange={(val)=>setForm({...form, mercado: val})}>
+                         <Select.Root value={form.mercado} onValueChange={(val)=>setForm({...form, mercado: val})}>
                               <Select.Trigger className="bg-black text-white border border-gray-700 px-4 py-2 rounded flex items-center justify-between w-full mt-1 hover:bg-gray-900 transition">
                                    <Select.Value placeholder="Seleccionar" />
                                    <ChevronDown size={16} />
