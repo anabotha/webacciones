@@ -98,7 +98,6 @@ const updateActives = async () => {
                     mercado: form.mercado,
                     moneda: payload.moneda,
                     fecha: fecha,
-                    mercado: form.mercado,
                },
           ]);
 
