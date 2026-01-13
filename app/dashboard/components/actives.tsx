@@ -12,7 +12,6 @@ interface activeType {
            mercado?: string;
            moneda?: string;
            fecha: Date;
-           mercado:string;
 } 
 export function Actives() {
      const [activeList, setActiveList] = useState<activeType[]>([]);
