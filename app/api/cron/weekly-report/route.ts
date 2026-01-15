@@ -24,16 +24,19 @@ export async function GET(request: Request) {
 
     // 3. Enviar el Email con los datos recibidos
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'Trading Bot <onboarding@resend.dev>', 
+      from: 'Botinv <onboarding@resend.dev>', 
       to: ['mauriciobarraa41@gmail.com'],
       subject: `📊 Reporte Semanal: ${report.rendimiento >= 0 ? 'Ganancia' : 'Pérdida'} del ${report.rendimiento.toFixed(2)}%`,
       html: `
         <h1>Resumen Semanal de Trading</h1>
-        <p>El mercado ha cerrado y aquí están tus resultados:</p>
+        <p>El mercado ha cerrado y aquí están tus resultados de la semana:</p>
         <ul>
-          <li><strong>Rendimiento:</strong> ${report.rendimiento.toFixed(2)}%</li>
-          <li><strong>Ganancia Total:</strong> $${report.ganancia.toLocaleString()}</li>
-          <li><strong>Operaciones realizadas:</strong> ${report.operaciones}</li>
+          <li><strong>Rendimiento:</strong> ${report.rendimiento_pct.toFixed(2)}%</li>
+          <li><strong>Rendimiento:</strong> ${report.pnl_real.toFixed(2)}%</li>
+          <li><strong>Ganancia Total:</strong> $${report.capital_usado.toLocaleString()}</li>
+          <li><strong>Periodo Inicio:</strong> ${report.periodo.inicio}</li>
+          <li><strong>Periodo Fin:</strong> ${report.periodo.fin}</li>
+
         </ul>
         <hr />
         <p>Reporte generado automáticamente por el sistema.</p>
