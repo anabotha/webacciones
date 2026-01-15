@@ -27,6 +27,8 @@ export function Actives() {
      moneda: "ARS"
 });
 const [mercado, setMercado] = useState(["ARGENTINA", "USA", "BRASIL", "JAPON", "CHINA"]);
+const [activosDisponibles, setActivosDisponibles] = useState<any[]>([]);
+const [cantidadDisponible, setCantidadDisponible] = useState<number>(0);
 
 useEffect(() => {
   const fetchTradingDay = async () => {
@@ -40,7 +42,21 @@ useEffect(() => {
       console.error("Error obteniendo trading day:", error);
     }
   };
+  
+  const fetchActivos = async () => {
+    try {
+      const res = await fetch("/api/actives");
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setActivosDisponibles(data);
+      }
+    } catch (error) {
+      console.error("Error obteniendo activos:", error);
+    }
+  };
+  
   fetchTradingDay();
+  fetchActivos();
 }, []);
 
 const updateActives = async () => {
@@ -155,14 +171,38 @@ alert("¡Operacion cargada con exito!");
                     </div>
                     <div>
                          <label htmlFor="activo" className="block text-sm font-medium mb-2">Activo</label>
-                         <input 
-                             type="text" 
-                             placeholder="APPL" 
-                             id="activo" 
-                             value={form.activo}
-                             className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500"
-                             onChange={(e)=>setForm({...form, activo: e.target.value})} 
-                         />
+                         {form.operacion === "SELL" ? (
+                              <Select.Root value={form.activo} onValueChange={(val) => {
+                                   setForm({...form, activo: val});
+                                   const selected = activosDisponibles.find(a => a.activo === val);
+                                   if (selected) {
+                                        setCantidadDisponible(Number(selected.cantidad_total));
+                                   }
+                              }}>
+                                   <Select.Trigger className="bg-black text-white border border-gray-700 px-4 py-2 rounded flex items-center justify-between w-full hover:bg-gray-900 transition mt-1">
+                                        <Select.Value placeholder="Seleccionar" />
+                                        <ChevronDown size={16} />
+                                   </Select.Trigger>
+                                   <Select.Content className="bg-black border border-gray-700 rounded text-white z-50">
+                                        <Select.Viewport>
+                                             {activosDisponibles.map((item) => (
+                                                  <Select.Item key={`${item.activo}-${item.tipo_activo}-${item.mercado}`} value={item.activo} className="px-4 py-2 cursor-pointer hover:bg-gray-800 outline-none">
+                                                       <Select.ItemText>{item.activo} ({item.cantidad_total} unidades)</Select.ItemText>
+                                                  </Select.Item>
+                                             ))}
+                                        </Select.Viewport>
+                                   </Select.Content>
+                              </Select.Root>
+                         ) : (
+                              <input 
+                                  type="text" 
+                                  placeholder="APPL" 
+                                  id="activo" 
+                                  value={form.activo}
+                                  className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500"
+                                  onChange={(e)=>setForm({...form, activo: e.target.value})} 
+                              />
+                         )}
                     </div>
                     <div>
                          <label htmlFor="precio" className="block text-sm font-medium mb-2">Precio</label>
@@ -190,17 +230,47 @@ alert("¡Operacion cargada con exito!");
                                </Select.Root>
                               </div>
                          </div>
+                         {form.operacion === "SELL" && form.precio && cantidadDisponible > 0 && (
+                              <p className="text-green-400 text-sm mt-2">
+                                   Máximo a recibir: {form.moneda} {(Number(form.precio) * cantidadDisponible).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </p>
+                         )}
                     </div>
                     <div>
-                         <label htmlFor="cantidad" className="block text-sm font-medium mb-2">Cantidad de dinero invertido</label>
-                         <input 
-                             type="number" 
-                             placeholder="45000" 
-                             id="cantidad" 
-                             value={form.cantidad}
-                             className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" 
-                             onChange={(e)=>setForm({...form, cantidad: e.target.value})} 
-                         />
+                         <label htmlFor="cantidad" className="block text-sm font-medium mb-2">{form.operacion === "SELL" ? "Dinero a recibir" : "Cantidad de dinero invertido"}</label>
+                         {form.operacion === "SELL" ? (
+                              <div>
+                                   <input 
+                                       type="number" 
+                                       placeholder="0" 
+                                       id="cantidad" 
+                                       value={form.cantidad}
+                                       max={form.precio && cantidadDisponible > 0 ? Number(form.precio) * cantidadDisponible : undefined}
+                                       className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" 
+                                       onChange={(e) => {
+                                            const valor = Number(e.target.value);
+                                            const maximo = form.precio && cantidadDisponible > 0 ? Number(form.precio) * cantidadDisponible : 0;
+                                            if (valor <= maximo) {
+                                                 setForm({...form, cantidad: e.target.value});
+                                            }
+                                       }}
+                                   />
+                                   {form.precio && cantidadDisponible > 0 && (
+                                        <p className="text-blue-400 text-sm mt-2">
+                                             Máximo: {form.moneda} {(Number(form.precio) * cantidadDisponible).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({cantidadDisponible} unidades × {form.moneda} {Number(form.precio).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
+                                        </p>
+                                   )}
+                              </div>
+                         ) : (
+                              <input 
+                                  type="number" 
+                                  placeholder="45000" 
+                                  id="cantidad" 
+                                  value={form.cantidad}
+                                  className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" 
+                                  onChange={(e)=>setForm({...form, cantidad: e.target.value})} 
+                              />
+                         )}
                     </div>
                     <div>
                          <label htmlFor="mercado" className="block text-sm font-medium mb-2">Mercado</label>

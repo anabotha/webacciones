@@ -1,4 +1,5 @@
 'use client'
+import { Checkbox } from '@headlessui/react';
 import React, { useState,useEffect } from 'react';
 
 interface activeType {

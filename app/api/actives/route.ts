@@ -5,7 +5,7 @@ export async function GET() {
 
      const { data, error } = await supabase
           .from("positions")
-          .select("*")
+          .select("activo, cantidad_total, tipo_activo, mercado")
      // .single();
 
      if (error && error.code !== "PGRST116") {
