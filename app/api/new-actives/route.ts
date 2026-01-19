@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       activo,
       tipo,                // BUY | SELL | HOLD
       tipo_activo,
-      monto_bruto,         // DINERO
+      montoBruto,         // DINERO
       precio,              // PRECIO UNITARIO
       moneda,
       source,
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       !trading_day_id ||
       !activo ||
       !tipo ||
-      !monto_bruto ||
+      !montoBruto ||
       !precio ||
       !moneda ||
       !source
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     const normalizedTipo = tipo.toUpperCase();
 
-    const montoBrutoNum = Number(monto_bruto);
+    const montoBrutoNum = Number(montoBruto);
     const precioUnitario = Number(precio);
 
     if (montoBrutoNum <= 0 || precioUnitario <= 0) {

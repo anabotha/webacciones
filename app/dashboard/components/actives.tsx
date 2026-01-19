@@ -8,7 +8,7 @@ interface activeType {
            activo: string;
            tipo_activo: string;
            precio: number;
-           cantidad: number;
+           montoBruto: number;
            mercado?: string;
            moneda?: string;
            fecha: Date;
@@ -22,7 +22,7 @@ export function Actives() {
      activo: "",
      tipo_activo: "",
      precio: "",
-     cantidad: "",
+     montoBruto: "",
      mercado: "",
      moneda: "ARS"
 });
@@ -65,7 +65,7 @@ const updateActives = async () => {
           activo: form.activo,
           tipo: form.operacion, // BUY | SELL | HOLD
           tipo_activo: form.tipo_activo,
-          cantidad: Number(form.cantidad),
+          montoBruto: Number(form.montoBruto),
           precio: Number(form.precio),
           moneda: form.moneda || form.mercado || "ARS",
           source: "web",
@@ -110,7 +110,7 @@ const updateActives = async () => {
                     activo: payload.activo,
                     tipo_activo: payload.tipo_activo,
                     precio: payload.precio,
-                    cantidad: payload.cantidad,
+                    montoBruto: payload.montoBruto,
                     mercado: form.mercado,
                     moneda: payload.moneda,
                     fecha: fecha,
@@ -118,7 +118,7 @@ const updateActives = async () => {
           ]);
 
           // limpiar formulario
-          setForm({ operacion: "", activo: "", tipo_activo: "", precio: "", cantidad: "", mercado: "", moneda: "ARS" });
+          setForm({ operacion: "", activo: "", tipo_activo: "", precio: "", montoBruto: "", mercado: "", moneda: "ARS" });
 alert("¡Operacion cargada con exito!");
      } catch (error) {
           console.error(error);
@@ -244,14 +244,14 @@ alert("¡Operacion cargada con exito!");
                                        type="number" 
                                        placeholder="0" 
                                        id="cantidad" 
-                                       value={form.cantidad}
+                                       value={form.montoBruto}
                                        max={form.precio && cantidadDisponible > 0 ? Number(form.precio) * cantidadDisponible : undefined}
                                        className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" 
                                        onChange={(e) => {
                                             const valor = Number(e.target.value);
                                             const maximo = form.precio && cantidadDisponible > 0 ? Number(form.precio) * cantidadDisponible : 0;
                                             if (valor <= maximo) {
-                                                 setForm({...form, cantidad: e.target.value});
+                                                 setForm({...form, montoBruto: e.target.value});
                                             }
                                        }}
                                    />
@@ -266,9 +266,9 @@ alert("¡Operacion cargada con exito!");
                                   type="number" 
                                   placeholder="45000" 
                                   id="cantidad" 
-                                  value={form.cantidad}
+                                  value={form.montoBruto}
                                   className="bg-black text-white border border-gray-700 p-2 rounded w-full mt-1 focus:outline-none focus:ring-1 focus:ring-gray-500 placeholder:text-gray-500" 
-                                  onChange={(e)=>setForm({...form, cantidad: e.target.value})} 
+                                  onChange={(e)=>setForm({...form, montoBruto: e.target.value})} 
                               />
                          )}
                     </div>
