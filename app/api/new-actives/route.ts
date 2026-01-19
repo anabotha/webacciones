@@ -8,10 +8,10 @@ export async function POST(req: Request) {
     const {
       trading_day_id,
       activo,
-      tipo,
+      tipo,                // BUY | SELL | HOLD
       tipo_activo,
-      monto,          // 🔑 dinero
-      precio,
+      monto_bruto,         // DINERO
+      precio,              // PRECIO UNITARIO
       moneda,
       source,
       mercado
@@ -21,9 +21,10 @@ export async function POST(req: Request) {
       !trading_day_id ||
       !activo ||
       !tipo ||
-      !monto ||
+      !monto_bruto ||
       !precio ||
-      !moneda
+      !moneda ||
+      !source
     ) {
       return NextResponse.json(
         { error: "Datos incompletos" },
@@ -33,21 +34,21 @@ export async function POST(req: Request) {
 
     const normalizedTipo = tipo.toUpperCase();
 
-    const montoNumerico = Number(monto);
+    const montoBrutoNum = Number(monto_bruto);
     const precioUnitario = Number(precio);
 
-    if (montoNumerico <= 0 || precioUnitario <= 0) {
+    if (montoBrutoNum <= 0 || precioUnitario <= 0) {
       return NextResponse.json(
-        { error: "Monto o precio inválido" },
+        { error: "Monto bruto o precio inválido" },
         { status: 400 }
       );
     }
 
-    const unidades = montoNumerico / precioUnitario;
+    const cantidad = montoBrutoNum / precioUnitario;
 
-    if (!isFinite(unidades) || unidades <= 0) {
+    if (!isFinite(cantidad) || cantidad <= 0) {
       return NextResponse.json(
-        { error: "Unidades inválidas" },
+        { error: "Cantidad de unidades inválida" },
         { status: 400 }
       );
     }
@@ -59,9 +60,9 @@ export async function POST(req: Request) {
         activo,
         tipo: normalizedTipo,
         tipo_activo,
-        cantidad: unidades,      // UNIDADES
-        precio: precioUnitario,  // PRECIO UNITARIO
-        total: montoNumerico,    // DINERO
+        cantidad,               // ✅ UNIDADES
+        precio: precioUnitario, // ✅ UNITARIO
+        monto_bruto: montoBrutoNum,
         moneda,
         source,
         mercado,
