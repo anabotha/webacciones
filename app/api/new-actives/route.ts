@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+console.log(body)
 
     const {
-      trading_day_id,
       activo,
       tipo,                // BUY | SELL | HOLD
       tipo_activo,
@@ -16,9 +16,7 @@ export async function POST(req: Request) {
       source,
       mercado
     } = body;
-
     if (
-      !trading_day_id ||
       !activo ||
       !tipo ||
       !montoBruto ||
@@ -56,7 +54,6 @@ export async function POST(req: Request) {
     const { data, error } = await supabase
       .from("operations")
       .insert({
-        trading_day_id,
         activo,
         tipo: normalizedTipo,
         tipo_activo,

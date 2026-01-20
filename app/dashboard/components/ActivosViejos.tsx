@@ -37,7 +37,6 @@ export function ActivosViejos({ activeList }: { activeList?: activeType[] }) {
               console.log(activos);
               if (activos) {
                    setActivosViejos(activos);
-                   console.log(activosViejos)
               } 
          }
          useEffect(() => {
