@@ -4,18 +4,19 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-console.log(body)
+    console.log(body);
 
     const {
       activo,
       tipo,                // BUY | SELL | HOLD
       tipo_activo,
-      montoBruto,         // DINERO
+      montoBruto,         // DINERO TOTAL A INVERTIR
       precio,              // PRECIO UNITARIO
       moneda,
       source,
       mercado
     } = body;
+
     if (
       !activo ||
       !tipo ||
@@ -31,7 +32,6 @@ console.log(body)
     }
 
     const normalizedTipo = tipo.toUpperCase();
-
     const montoBrutoNum = Number(montoBruto);
     const precioUnitario = Number(precio);
 
@@ -42,28 +42,22 @@ console.log(body)
       );
     }
 
-    const cantidad = montoBrutoNum / precioUnitario;
-
-    if (!isFinite(cantidad) || cantidad <= 0) {
-      return NextResponse.json(
-        { error: "Cantidad de unidades inválida" },
-        { status: 400 }
-      );
-    }
-
+    // ⚠️ CAMBIO CRÍTICO: enviamos el monto en "cantidad"
+    // El trigger se encargará de calcular la cantidad real de unidades
     const { data, error } = await supabase
       .from("operations")
       .insert({
         activo,
         tipo: normalizedTipo,
         tipo_activo,
-        cantidad,               // ✅ UNIDADES
-        precio: precioUnitario, // ✅ UNITARIO
-        monto_bruto: montoBrutoNum,
+        cantidad: montoBrutoNum,  // ✅ MONTO TOTAL (el trigger calculará las unidades)
+        precio: precioUnitario,    // ✅ PRECIO UNITARIO
         moneda,
         source,
         mercado,
         fecha: new Date().toISOString()
+        // ❌ NO enviamos monto_bruto, comision, iva, fees, monto_total
+        // El trigger los calculará automáticamente
       })
       .select()
       .single();
