@@ -1,8 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import * as Brevo from '@getbrevo/brevo';
+import { alertaInversionTemplate } from "../../../assets/mailTemplate.js";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Instanciar la clase necesaria
+const apiInstance = new Brevo.TransactionalEmailsApi();
+
+// Configurar la API Key
+apiInstance.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY!
+);
 
 export async function GET(request: Request) {
   // 1. Verificación de Seguridad (Vercel Cron)
@@ -16,39 +24,49 @@ export async function GET(request: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
+  const p_fin = new Date().toISOString().split('T')[0];
+  const p_inicio = new Date(new Date().setDate(new Date().getDate() - 7))
+    .toISOString()
+    .split('T')[0];
+
   try {
     // 2. Llamamos a la función de la BD y obtenemos el JSON que devuelve
-    const { data: report, error: rpcError } = await supabase.rpc('generate_weekly_report');
-
+    const { data: report, error: rpcError } = await supabase.rpc(
+      'generate_weekly_report_range',
+      {
+        p_inicio,
+        p_fin,
+      }
+    );
+    await enviarAlertaInversionMail({data: report});
     if (rpcError) throw rpcError;
 
-    // 3. Enviar el Email con los datos recibidos
-    const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'Botinv <onboarding@resend.dev>', 
-      to: ['mauriciobarraa41@gmail.com'],
-      subject: `📊 Reporte Semanal: ${report.rendimiento >= 0 ? 'Ganancia' : 'Pérdida'} del ${report.rendimiento.toFixed(2)}%`,
-      html: `
-        <h1>Resumen Semanal de Trading</h1>
-        <p>El mercado ha cerrado y aquí están tus resultados de la semana:</p>
-        <ul>
-          <li><strong>Rendimiento:</strong> ${report.rendimiento_pct.toFixed(2)}%</li>
-          <li><strong>Rendimiento:</strong> ${report.pnl_real.toFixed(2)}%</li>
-          <li><strong>Ganancia Total:</strong> $${report.capital_usado.toLocaleString()}</li>
-          <li><strong>Periodo Inicio:</strong> ${report.periodo.inicio}</li>
-          <li><strong>Periodo Fin:</strong> ${report.periodo.fin}</li>
+    return NextResponse.json({ success: true, data: report });
+  } catch (error) {
+    console.error('Error generating weekly report:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
+}
 
-        </ul>
-        <hr />
-        <p>Reporte generado automáticamente por el sistema.</p>
-      `,
-    });
+export async function enviarAlertaInversionMail(data: any): Promise<void> {
+  const sendSmtpEmail = new Brevo.SendSmtpEmail();
 
-    if (emailError) throw emailError;
+  sendSmtpEmail.subject = "Alerta de inversión";
+  sendSmtpEmail.sender = {
+    name: "botinv",
+    email: "mauriciobarraa41@gmail.com",
+  };
 
-    return NextResponse.json({ success: true, report, emailData });
+  sendSmtpEmail.to = [
+    { email: "josefinabotha@gmail.com", name: "zar de las finanzas" },
+  ];
 
-  } catch (error: any) {
-    console.error('Error en el cron:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  sendSmtpEmail.htmlContent = alertaInversionTemplate(data);
+
+  try {
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log('Correo enviado con éxito. ID:', result.body.messageId);
+  } catch (error) {
+    console.error('Error al enviar el correo de Brevo:', error);
   }
 }

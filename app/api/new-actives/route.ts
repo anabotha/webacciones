@@ -43,24 +43,23 @@ export async function POST(req: Request) {
     }
 
     // ⚠️ CAMBIO CRÍTICO: enviamos el monto en "cantidad"
-    // El trigger se encargará de calcular la cantidad real de unidades
-    const { data, error } = await supabase
-      .from("operations")
-      .insert({
-        activo,
-        tipo: normalizedTipo,
-        tipo_activo,
-        cantidad: montoBrutoNum,  // ✅ MONTO TOTAL (el trigger calculará las unidades)
-        precio: precioUnitario,    // ✅ PRECIO UNITARIO
-        moneda,
-        source,
-        mercado,
-        fecha: new Date().toISOString()
-        // ❌ NO enviamos monto_bruto, comision, iva, fees, monto_total
-        // El trigger los calculará automáticamente
-      })
-      .select()
-      .single();
+const { data, error } = await supabase
+  .from("operations")
+  .insert({
+    activo,
+    tipo: normalizedTipo,       // BUY | SELL
+    tipo_activo,
+    precio: precioUnitario,     // precio unitario ARS
+    monto_total: montoBrutoNum, // ✅ PLATA TOTAL
+    moneda,
+    source,
+    mercado,
+    fecha: new Date().toISOString()
+  })
+  .select()
+  .single();
+
+   
 
     if (error) {
       return NextResponse.json(

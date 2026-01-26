@@ -49,6 +49,7 @@ useEffect(() => {
       const data = await res.json();
       if (Array.isArray(data)) {
         setActivosDisponibles(data);
+        console.log("Activos disponibles:", data);
       }
     } catch (error) {
       console.error("Error obteniendo activos:", error);
@@ -65,26 +66,15 @@ const updateActives = async () => {
           activo: form.activo,
           tipo: form.operacion, // BUY | SELL | HOLD
           tipo_activo: form.tipo_activo,
-          montoBruto: Number(form.montoBruto),
           precio: Number(form.precio),
           moneda: form.moneda || form.mercado || "ARS",
           source: "web",
           mercado:form.mercado,
+          ...(form.operacion === "BUY",
+    ? { montoBruto: Number(form.montoBruto) }   // BUY → dinero
+    : { cantidad })    
      };
 
-// const isInvalid = 
-//      !payload.activo || 
-//      !payload.tipo || 
-//      !payload.trading_day_id || 
-//      !payload.moneda ||
-//      isNaN(payload.cantidad) || payload.cantidad <= 0 || 
-//      isNaN(payload.precio) || payload.precio <= 0;
-
-// if (isInvalid) {
-//     console.log("Datos enviados:", payload); // Esto te dirá qué campo exacto falta
-//     alert("Faltan campos requeridos o trading day no cargado");
-//     return;
-// }
 
      try {
           const res = await fetch("/api/new-actives", {
