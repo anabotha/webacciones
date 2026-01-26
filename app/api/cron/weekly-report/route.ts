@@ -13,13 +13,13 @@ apiInstance.setApiKey(
 );
 
 export async function GET(request: Request) {
-  // 1. Verificación de Seguridad (Vercel Cron)
-const authHeader = request.headers.get('authorization');
-const expectedToken = `Bearer ${process.env.CRON_SECRET}`;
+//   // 1. Verificación de Seguridad (Vercel Cron)
+// const authHeader = request.headers.get('authorization');
+// const expectedToken = `Bearer ${process.env.CRON_SECRET}`;
 
-if (!process.env.CRON_SECRET || authHeader !== expectedToken) {
-  return new Response('Unauthorized', { status: 401 });
-}
+// if (!process.env.CRON_SECRET || authHeader !== expectedToken) {
+//   return new Response('Unauthorized', { status: 401 });
+// }
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
