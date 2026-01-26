@@ -43,26 +43,26 @@ export function alertaInversionTemplate({
 
   <div style="display: grid; row-gap: 10px;">
     <div style="display: flex; justify-content: space-between;">
-      <span>Capital utilizado</span>
+      <span>Capital utilizado: </span>
       <strong>$${capital_usado.toFixed(2)}</strong>
-    </div>
+    </div><br>
 
     <div style="display: flex; justify-content: space-between;">
-      <span>Ganancia realizada</span>
+      <span>Ganancia realizada: </span>
       <strong style="color: ${ganancia_realizada >= 0 ? '#059669' : '#dc2626'};">
         $${ganancia_realizada.toFixed(2)}
       </strong>
     </div>
-
+<br>
     <div style="display: flex; justify-content: space-between;">
-      <span>Rendimiento</span>
+      <span>Rendimiento: </span>
       <strong style="color: ${rendimiento_pct >= 0 ? '#059669' : '#dc2626'};">
         ${rendimiento_pct.toFixed(2)}%
       </strong>
     </div>
-
+<br>
     <div style="display: flex; justify-content: space-between;">
-      <span>Operaciones realizadas</span>
+      <span>Operaciones realizadas: </span>
       <strong>${operaciones}</strong>
     </div>
   </div>
