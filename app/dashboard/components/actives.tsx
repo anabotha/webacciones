@@ -69,53 +69,66 @@ const updateActives = async () => {
           precio: Number(form.precio),
           moneda: form.moneda || form.mercado || "ARS",
           source: "web",
-          mercado:form.mercado,
-          ...(form.operacion === "BUY",
-    ? { montoBruto: Number(form.montoBruto) }   // BUY → dinero
-    : { cantidad })    
-     };
+          mercado: form.mercado,
+          ...(form.operacion === "BUY"
+               ? { montoBruto: Number(form.montoBruto) }   // BUY → dinero
+               : { cantidad: Number(form.montoBruto) }     // SELL → cantidad recibida
+          ),
+     };}
+
+//           tipo_activo: form.tipo_activo,
+//           precio: Number(form.precio),
+//           moneda: form.moneda || form.mercado || "ARS",
+//           source: "web",
+//          // ...existing code...
+// mercado: form.mercado,
+// ...(form.operacion === "BUY"
+//   ? { montoBruto: Number(form.montoBruto) }   // BUY → dinero
+//   : { cantidad }),
+   
+//      };
 
 
-     try {
-          const res = await fetch("/api/new-actives", {
-               method: "POST",
-               cache: "no-store",
-               headers: { "Content-Type": "application/json" },
-               body: JSON.stringify(payload),
-          });
+//      try {
+//           const res = await fetch("/api/new-actives", {
+//                method: "POST",
+//                cache: "no-store",
+//                headers: { "Content-Type": "application/json" },
+//                body: JSON.stringify(payload),
+//           });
 
-          if (!res.ok) {
-               const err = await res.json().catch(() => ({}));
-               console.error("Error guardando:", err);
-               alert("Error al guardar la operación");
-               return;
-          }
+//           if (!res.ok) {
+//                const err = await res.json().catch(() => ({}));
+//                console.error("Error guardando:", err);
+//                alert("Error al guardar la operación");
+//                return;
+//           }
 
-          const data = await res.json();
+//           const data = await res.json();
 
-          setActiveList(prev => [
-               ...prev,
-               {
-                    operacion: payload.tipo,
-                    activo: payload.activo,
-                    tipo_activo: payload.tipo_activo,
-                    precio: payload.precio,
-                    montoBruto: payload.montoBruto,
-                    mercado: form.mercado,
-                    moneda: payload.moneda,
-                    fecha: fecha,
-               },
-          ]);
+//           setActiveList(prev => [
+//                ...prev,
+//                {
+//                     operacion: payload.tipo,
+//                     activo: payload.activo,
+//                     tipo_activo: payload.tipo_activo,
+//                     precio: payload.precio,
+//                     montoBruto: payload.montoBruto,
+//                     mercado: form.mercado,
+//                     moneda: payload.moneda,
+//                     fecha: fecha,
+//                },
+//           ]);
 
-          // limpiar formulario
-          setForm({ operacion: "", activo: "", tipo_activo: "", precio: "", montoBruto: "", mercado: "", moneda: "ARS" });
-alert("¡Operacion cargada con exito!");
-     } catch (error) {
-          console.error(error);
-          alert("Error en la petición");
-     }
+//           // limpiar formulario
+//           setForm({ operacion: "", activo: "", tipo_activo: "", precio: "", montoBruto: "", mercado: "", moneda: "ARS" });
+// alert("¡Operacion cargada con exito!");
+//      } catch (error) {
+//           console.error(error);
+//           alert("Error en la petición");
+//      }
 
-};
+// };
      return (
           <div className="text-white">
                <h3 className="text-xl font-bold mb-2">Ingrese los cambios en los activos</h3>

@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import * as Brevo from '@getbrevo/brevo';
-import { alertaInversionTemplate } from "../../../assets/mailTemplate.js";
+import { alertaInversionTemplate } from "../../../assets/mailTemplate";
 
 // Instanciar la clase necesaria
 const apiInstance = new Brevo.TransactionalEmailsApi();
