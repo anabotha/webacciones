@@ -14,10 +14,12 @@ apiInstance.setApiKey(
 
 export async function GET(request: Request) {
   // 1. Verificación de Seguridad (Vercel Cron)
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response('Unauthorized', { status: 401 });
-  }
+const authHeader = request.headers.get('authorization');
+const expectedToken = `Bearer ${process.env.CRON_SECRET}`;
+
+if (!process.env.CRON_SECRET || authHeader !== expectedToken) {
+  return new Response('Unauthorized', { status: 401 });
+}
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -38,7 +40,7 @@ export async function GET(request: Request) {
         p_fin,
       }
     );
-    await enviarAlertaInversionMail({data: report});
+await enviarAlertaInversionMail(report);
     if (rpcError) throw rpcError;
 
     return NextResponse.json({ success: true, data: report });
@@ -61,7 +63,14 @@ export async function enviarAlertaInversionMail(data: any): Promise<void> {
     { email: "josefinabotha@gmail.com", name: "zar de las finanzas" },
   ];
 
-  sendSmtpEmail.htmlContent = alertaInversionTemplate(data);
+  sendSmtpEmail.htmlContent = alertaInversionTemplate({
+    semana_inicio: data.semana_inicio || new Date().toISOString().split('T')[0],
+    semana_fin: data.semana_fin || new Date().toISOString().split('T')[0],
+    ganancia_realizada: data.ganancia_realizada || 0,
+    capital_usado: data.capital_usado || 0,
+    rendimiento_pct: data.rendimiento_pct || 0,
+    operaciones: data.operaciones || 0,
+  });
 
   try {
     const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
