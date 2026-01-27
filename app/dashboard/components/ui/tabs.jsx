@@ -1,37 +1,28 @@
-
-import React from 'react';
-
-const TabsContext = React.createContext({});
-
-export const Tabs = ({ value, onValueChange, children, className }) => {
-
-     return (
-          <TabsContext.Provider value={{ value, onValueChange }}>
-               <div className={className}>{children}</div>
-          </TabsContext.Provider>
-     );
-};
-
-export const TabsList = ({ className, children }) => {
-     return <div className={`flex space-x-2 bg-gray-100 p-1 rounded-lg ${className}`}>{children}</div>;
-};
-
-export const TabsTrigger = ({ value, children, className }) => {
-     const { value: selectedValue, onValueChange } = React.useContext(TabsContext);
-     const isSelected = selectedValue === value;
-     return (
-          <button
-               className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${isSelected ? 'bg-white shadow text-black' : 'text-gray-500 hover:text-gray-700'
-                    } ${className}`}
-               onClick={() => onValueChange(value)}
-          >
-               {children}
-          </button>
-     );
-};
-
-export const TabsContent = ({ value, children }) => {
-     const { value: selectedValue } = React.useContext(TabsContext);
-     if (value !== selectedValue) return null;
-     return <div>{children}</div>;
-};
+/**
+ * @deprecated - Use ../../tabs/index.tsx instead
+ * 
+ * This file has been replaced with a compound component implementation
+ * that follows React composition patterns:
+ * - Uses context for state management
+ * - Provides explicit sub-components (Provider, Frame, List, Trigger, Content)
+ * - Decouples state management from UI rendering
+ * - Enables dependency injection of context
+ * 
+ * Migration guide:
+ * Old: import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs"
+ * New: import { Tabs } from "../../tabs"
+ * 
+ * Old usage:
+ *   <Tabs value={activeTab} onValueChange={setActiveTab}>
+ *     <TabsList>...</TabsList>
+ *     <TabsContent value="tab1">...</TabsContent>
+ *   </Tabs>
+ * 
+ * New usage:
+ *   <Tabs.Provider initialTab="tab1">
+ *     <Tabs.Frame>
+ *       <Tabs.List>...</Tabs.List>
+ *       <Tabs.Content value="tab1">...</Tabs.Content>
+ *     </Tabs.Frame>
+ *   </Tabs.Provider>
+ */

@@ -263,6 +263,11 @@ const updateActives = async () => {
                                              Máximo: {form.moneda} {(Number(form.precio) * cantidadDisponible).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({cantidadDisponible} unidades × {form.moneda} {Number(form.precio).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
                                         </p>
                                    )}
+                                   {form.montoBruto && form.precio && (
+                                        <p className="text-green-400 text-sm mt-2 font-semibold">
+                                             Venderías: {(Number(form.montoBruto) / Number(form.precio)).toFixed(2)} unidades
+                                        </p>
+                                   )}
                               </div>
                          ) : (
                               <input 
