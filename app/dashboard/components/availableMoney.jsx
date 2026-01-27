@@ -82,15 +82,15 @@ export function AvailableMoney() {
           <div className="flex flex-col items-center justify-center container gap-4 p-10">
                {(availableARS !== null && availableUSD !== null) ? (
                     <>
-                         <h1 className="text-lg font-semibold">Disponible USD: {availableUSD}</h1>
-                         <h1 className="text-lg font-semibold">Disponible ARS: {availableARS}</h1>
+                         <h1 className="text-lg font-semibold">Disponible USD: {String(availableUSD)}</h1>
+                         <h1 className="text-lg font-semibold">Disponible ARS: {String(availableARS)}</h1>
                          <h2 className="text-lg text-gray-200">Mañana deberás volver a ingresar el disponible</h2>
                     </>
                ) : (
                     <form onSubmit={handleSave} className="w-full max-w-sm">
                          <div className="mb-4">
                               <h3 className="text-lg font-semibold">Ingrese el monto disponible para invertir hoy</h3>
-                              <h4 className="text-sm text-gray-500">{fecha.getDate()}/{fecha.getMonth() + 1}/{fecha.getFullYear()}</h4>
+                              <h4 className="text-sm text-gray-500">{String(fecha.getDate())}/{String(fecha.getMonth() + 1)}/{String(fecha.getFullYear())}</h4>
                          </div>
 
                          <div className="flex flex-col gap-4">

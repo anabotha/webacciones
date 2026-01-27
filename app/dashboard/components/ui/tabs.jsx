@@ -1,6 +1,8 @@
 
 import React from 'react';
 
+const TabsContext = React.createContext({});
+
 export const Tabs = ({ value, onValueChange, children, className }) => {
 
      return (
@@ -9,8 +11,6 @@ export const Tabs = ({ value, onValueChange, children, className }) => {
           </TabsContext.Provider>
      );
 };
-
-const TabsContext = React.createContext({});
 
 export const TabsList = ({ className, children }) => {
      return <div className={`flex space-x-2 bg-gray-100 p-1 rounded-lg ${className}`}>{children}</div>;
