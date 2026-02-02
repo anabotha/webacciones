@@ -38,8 +38,8 @@ export function DisponibleTab() {
     }
   }
 
-  const hasData = state.tradingDay?.monto_maximo_ars !== null && state.tradingDay?.monto_maximo_usd !== null
-
+  const hasData = state.tradingDay!=null && (state.tradingDay?.monto_maximo_ars !== null && state.tradingDay?.monto_maximo_usd !== null)
+console.log(hasData,state);
   return (
     <div className="flex flex-col items-center justify-center container gap-4 p-10">
       {state.isLoading ? (
