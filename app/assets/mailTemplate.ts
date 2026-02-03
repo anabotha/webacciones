@@ -5,6 +5,7 @@ export function alertaInversionTemplate({
   capital_usado,
   rendimiento_pct,
   operaciones,
+  bestTrades
 }: {
   semana_inicio: string;
   semana_fin: string;
@@ -12,6 +13,12 @@ export function alertaInversionTemplate({
   capital_usado: number;
   rendimiento_pct: number;
   operaciones: number;
+  bestTrades: Array<{ activo: string;
+			rendimiento_pct: number;
+			capital_invertido: number;
+			pnl: number;
+			operaciones: number }>;
+  
 }) {
   return `
   <div style="
@@ -41,32 +48,46 @@ export function alertaInversionTemplate({
     Período: <strong>${semana_inicio}</strong> al <strong>${semana_fin}</strong>
   </p>
 
-  <div style="display: grid; row-gap: 10px;">
-    <div style="display: flex; justify-content: space-between;">
-      <span>Capital utilizado: </span>
-      <strong>$${capital_usado.toFixed(2)}</strong>
-    </div><br>
-
-    <div style="display: flex; justify-content: space-between;">
-      <span>Ganancia realizada: </span>
-      <strong style="color: ${ganancia_realizada >= 0 ? '#059669' : '#dc2626'};">
-        $${ganancia_realizada.toFixed(2)}
-      </strong>
-    </div>
-<br>
-    <div style="display: flex; justify-content: space-between;">
-      <span>Rendimiento: </span>
-      <strong style="color: ${rendimiento_pct >= 0 ? '#059669' : '#dc2626'};">
-        ${rendimiento_pct.toFixed(2)}%
-      </strong>
-    </div>
-<br>
-    <div style="display: flex; justify-content: space-between;">
-      <span>Operaciones realizadas: </span>
-      <strong>${operaciones}</strong>
-    </div>
+<div style="display: grid; row-gap: 10px;">
+  <div style="display: flex; justify-content: space-between;">
+    <span>Capital utilizado: </span>
+    <strong>$${capital_usado.toFixed(2)}</strong>
   </div>
+
+  <div style="display: flex; justify-content: space-between;">
+    <span>Ganancia realizada: </span>
+    <strong style="color: ${ganancia_realizada >= 0 ? '#059669' : '#dc2626'};">
+      $${ganancia_realizada.toFixed(2)}
+    </strong>
+  </div>
+
+  <div style="display: flex; justify-content: space-between;">
+    <span>Rendimiento: </span>
+    <strong style="color: ${rendimiento_pct >= 0 ? '#059669' : '#dc2626'};">
+      ${rendimiento_pct.toFixed(2)}%
+    </strong>
+  </div>
+
+  <div style="display: flex; justify-content: space-between;">
+    <span>Operaciones realizadas: </span>
+    <strong>${operaciones}</strong>
+  </div>
+
+  <div>
+    <div style="margin-bottom: 8px;"><strong>Mejores Trades:</strong></div>
+    ${bestTrades.map(trade => `
+      <div style="margin-top: 8px; font-size: 12px;">
+        <strong>Activo:</strong> ${trade.activo} |
+        <strong>Rendimiento:</strong> <span style="color: ${trade.rendimiento_pct >= 0 ? '#059669' : '#dc2626'};">${trade.rendimiento_pct.toFixed(2)}%</span> |
+        <strong>Capital Invertido:</strong> $${trade.capital_invertido.toFixed(2)} |
+        <strong>PNL:</strong> <span style="color: ${trade.pnl >= 0 ? '#059669' : '#dc2626'};">$${trade.pnl.toFixed(2)}</span>
+      </div>
+    `).join('')}
+  </div>
+
+</div>
 </div>
 
   `;
 }
+  
