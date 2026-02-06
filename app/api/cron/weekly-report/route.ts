@@ -10,6 +10,8 @@ type WeeklyReport = {
   ganancia_total: number;
   operaciones: number;
   rendimiento_pct: number;
+  bestTrades: any[];
+  capital_usado: number;
 };
 // Instanciar la clase necesaria
 const apiInstance = new Brevo.TransactionalEmailsApi();
@@ -62,20 +64,14 @@ export async function enviarAlertaInversionMail(
     semana_fin: report.semana_fin,
     ganancia_total: report.ganancia_total ?? report.ganancia_realizada ?? 0,
     operaciones: report.operaciones ?? 0,
-    rendimiento_pct: report.rendimiento_pct ?? 0
+    rendimiento_pct: report.rendimiento_pct ?? 0,
+    bestTrades: report.bestTrades || [],
+    capital_usado: report.capital_usado || 0,
   };
 
-  /* ---------- SUMMARY + EMBEDDING ---------- */
+
   const summaryText = buildWeeklySummaryText(weeklyData);
-  // // const embedding = await createEmbedding(summaryText);
 
-  // await supabase.from("weekly_context_embeddings").insert({
-  //   weekly_report_id: report.id,
-  //   summary_text: summaryText,
-  //   embedding: null
-  // });
-
-  /* ---------- MAIL ---------- */
   const sendSmtpEmail = new Brevo.SendSmtpEmail();
 
   sendSmtpEmail.subject = "Resumen semanal de inversión";
@@ -89,13 +85,13 @@ export async function enviarAlertaInversionMail(
   ];
 
   sendSmtpEmail.htmlContent = alertaInversionTemplate({
-    semana_inicio: data.semana_inicio || new Date().toISOString().split('T')[0],
-    semana_fin: data.semana_fin || new Date().toISOString().split('T')[0],
-    ganancia_realizada: data.ganancia_realizada || 0,
-    capital_usado: data.capital_usado || 0,
-    rendimiento_pct: data.rendimiento_pct || 0,
-    operaciones: data.operaciones || 0,
-    bestTrades: data.bestTrades || [],
+    semana_inicio: weeklyData.semana_inicio || new Date().toISOString().split('T')[0],
+    semana_fin: weeklyData.semana_fin || new Date().toISOString().split('T')[0],
+    ganancia_realizada: weeklyData.ganancia_total || 0,
+    capital_usado: weeklyData.capital_usado || 0,
+    rendimiento_pct: weeklyData.rendimiento_pct || 0,
+    operaciones: weeklyData.operaciones || 0,
+    bestTrades: weeklyData.bestTrades || [],
   });
 
   try {
