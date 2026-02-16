@@ -387,7 +387,7 @@ if (!res.ok) {
           
 
           {/* Botón VENDER TODO */}
-          {isSell && (
+     {/*     {isSell && (
             <button
               type="button"
               onClick={handleVenderTodo}
@@ -397,7 +397,7 @@ if (!res.ok) {
               {isLoadingVenderTodo ? 'Vendiendo...' : 'VENDER TODO'}
             </button>
           )}
-
+*/}
           {/* Submit Button */}
           <button
             type="submit"
