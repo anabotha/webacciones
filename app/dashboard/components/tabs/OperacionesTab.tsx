@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useActivesContext } from '../../context/ActivesContext'
 import { useTradingDayContext } from '../../context/TradingDayContext'
+import { createClient } from '@supabase/supabase-js'
 import * as Select from '@radix-ui/react-select'
 import { ChevronDown } from 'lucide-react'
 
@@ -45,6 +46,7 @@ const MONEDAS = [
 export function OperacionesTab() {
   const { state: activesState, actions: activesActions } = useActivesContext()
   const { state: tradingDayState } = useTradingDayContext()
+  const [isLoadingVenderTodo, setIsLoadingVenderTodo] = useState(false)
   
   const [form, setForm] = useState<FormState>({
     operacion: '',
@@ -149,6 +151,59 @@ export function OperacionesTab() {
   const handleSelectChange = (field: keyof FormState) => (value: string) => {
     setForm(prev => ({ ...prev, [field]: value }))
   }
+
+  // Handler para vender posición completa
+  const handleVenderTodo = async () => {
+    if (!form.activo || !form.tipo_activo || !form.precio || !form.mercado) {
+      alert('Por favor completa todos los campos')
+      return
+    }
+const payload = {
+  activo: form.activo,
+  tipo_activo: form.tipo_activo,
+  mercado: form.mercado,
+  precio: form.precio,
+  moneda: form.moneda || 'ARS',
+}
+
+setIsLoadingVenderTodo(true)
+
+const res = await fetch('/api/sell-all', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(payload),
+})
+
+const data = await res.json()
+
+if (!res.ok) {
+  alert(data.error || 'Error al vender')
+} else {
+  alert('¡Posición vendida completamente!')
+}
+
+      // Refrescar activos después de vender
+      await activesActions.refetch()
+      
+      // Limpiar formulario
+      setForm({
+        operacion: '',
+        activo: '',
+        tipo_activo: '',
+        precio: '',
+        montoBruto: '',
+        mercado: '',
+        moneda: 'ARS',
+      })
+    
+      setIsLoadingVenderTodo(false)
+    
+  }
+
+  // Verificar si todos los campos SELL están completos
+  const allSellFieldsComplete = isSell && form.activo && form.tipo_activo && form.precio && form.mercado
 
   return (
     <div className="text-white">
@@ -329,15 +384,19 @@ export function OperacionesTab() {
             </div>
           </div>
 
-          {/* Dinero total a vender (cálculo automático)
-          {isSell && montoVenta && (
-            <div className="bg-gray-800 p-4 rounded border border-gray-700">
-              <p className="text-gray-400 text-sm">Dinero total a recibir</p>
-              <p className="text-white text-xl font-bold">
-                ${montoVenta} {form.moneda || 'ARS'}
-              </p>
-            </div>
-          )} */}
+          
+
+          {/* Botón VENDER TODO */}
+          {isSell && (
+            <button
+              type="button"
+              onClick={handleVenderTodo}
+              disabled={!allSellFieldsComplete || isLoadingVenderTodo}
+              className="bg-red-600 text-white px-4 py-2 rounded mt-2 hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+            >
+              {isLoadingVenderTodo ? 'Vendiendo...' : 'VENDER TODO'}
+            </button>
+          )}
 
           {/* Submit Button */}
           <button
