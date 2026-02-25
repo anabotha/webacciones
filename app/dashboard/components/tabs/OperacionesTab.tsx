@@ -348,7 +348,7 @@ if (!res.ok) {
           <div className="flex gap-4">
             <div className="flex-1">
               <label htmlFor="montoBruto" className="block text-sm font-medium mb-2">
-                {isBuy ? 'Monto Invertido' : isSell ? 'Monto a retirar' : 'Cantidad'}
+                {isBuy ? 'Monto ingresado' : isSell ? 'Cantidad de papeles a vender' : 'Cantidad'}
               </label>
               <input
                 id="montoBruto"

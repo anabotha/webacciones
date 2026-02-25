@@ -52,37 +52,63 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ CÁLCULO CORRECTO
-    const cantidad = montoBrutoNum / precioUnitario;
+  
+if(normalizedTipo === "SELL") {
 
-    const { data, error } = await supabase
-      .from("operations")
-      .insert({
-        trading_day_id: finalTradingDayId,
-        activo,
-        tipo: normalizedTipo,
-        tipo_activo,
-        cantidad,                 // ✅ OBLIGATORIO
-        precio: precioUnitario,
-        monto_bruto: montoBrutoNum,
-        moneda,
-        source,
-        mercado,
-        fecha: new Date().toISOString()
-      })
-      .select()
-      .single();
+  const { data, error } = await supabase
+    .from("operations")
+    .insert({
+      trading_day_id: null,
+      activo,
+      tipo: normalizedTipo,
+      tipo_activo,
+      precio: precioUnitario,
+      cantidad: montoBrutoNum,
+      moneda,
+      source,
+      mercado,
+      fecha: new Date().toISOString()
+    })
+    .select()
+    .single();
 
     if (error) {
-      console.error("SUPABASE ERROR:", error);
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
+    console.error("SUPABASE ERROR:", error);
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    );}
+return NextResponse.json({ success: true, data });
+
+}else{
+
+  const { data, error } = await supabase
+    .from("operations")
+    .insert({
+      trading_day_id: finalTradingDayId,
+      activo,
+      tipo: normalizedTipo,
+      tipo_activo,
+      precio: precioUnitario,
+      monto_bruto: montoBrutoNum,
+      moneda,
+      source,
+      mercado,
+      fecha: new Date().toISOString()
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("SUPABASE ERROR:", error);
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    );
+}
+return NextResponse.json({ success: true, data });
+
     }
-
-    return NextResponse.json({ success: true, data });
-
   } catch (err) {
     console.error("CATCH ERROR:", err);
     return NextResponse.json(
@@ -90,4 +116,6 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
+
+    
 }
