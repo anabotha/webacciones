@@ -1,125 +1,76 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import * as Brevo from '@getbrevo/brevo';
-import { alertaInversionTemplate } from "../../../assets/mailTemplate";
-
 
 type WeeklyReport = {
-  semana_inicio: string;      // YYYY-MM-DD
-  semana_fin: string;         // YYYY-MM-DD
-  ganancia_total: number;
-  operaciones: number;
-  rendimiento_pct: number;
-  bestTrades: any[];
+  status: string;
+  semana_inicio: string;
+  semana_fin: string;
+  ganancia_realizada: number;
   capital_usado: number;
+  rendimiento_pct: number;
+  operaciones: number;
+  bestTrades: {
+    activo: string;
+    rendimiento_pct: number;
+    capital_invertido: number;
+    pnl: number;
+  }[];
 };
-// Instanciar la clase necesaria
-const apiInstance = new Brevo.TransactionalEmailsApi();
 
-// Configurar la API Key
-apiInstance.setApiKey(
-  Brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY!
-);
+const TELEGRAM_CHAT_IDS = process.env.TELEGRAM_CHAT_ID
+  ? process.env.TELEGRAM_CHAT_ID.split(',').map((id: string) => id.trim())
+  : [];
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
 export async function GET(request: Request) {
-
-
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
   const p_fin = new Date().toISOString().split("T")[0];
-  const p_inicio = new Date(
-    new Date().setDate(new Date().getDate() - 7)
-  ).toISOString().split("T")[0];
+  const date = new Date();
+  date.setDate(date.getDate() - 7);
+  const p_inicio = date.toLocaleDateString("sv-SE");
 
   try {
-    const { data: report, error } = await supabase.rpc(
+    const { data, error } = await supabase.rpc(
       "generate_weekly_report_range",
       { p_inicio, p_fin }
     );
 
     if (error) throw error;
-    if (!report) throw new Error("Weekly report vacío");
+    if (!data || data.status !== "success") {
+      throw new Error("Weekly report inválido");
+    }
 
-    await enviarAlertaInversionMail(report, supabase);
+    await sendTelegramMessage(data as WeeklyReport);
 
-    return NextResponse.json({ success: true, data: report });
-  } catch (error) {
-    console.error("Error generating weekly report:", error);
+    return NextResponse.json({ success: true, data });
+  } catch (err) {
+    console.error("Error generando weekly report:", err);
     return new Response("Internal Server Error", { status: 500 });
   }
 }
 
-export async function enviarAlertaInversionMail(
-  report: any,
-  supabase: any
-): Promise<void> {
-
-  /* ---------- NORMALIZACIÓN ---------- */
-  const weeklyData: WeeklyReport = {
-    semana_inicio: report.semana_inicio,
-    semana_fin: report.semana_fin,
-    ganancia_total: report.ganancia_total ?? report.ganancia_realizada ?? 0,
-    operaciones: report.operaciones ?? 0,
-    rendimiento_pct: report.rendimiento_pct ?? 0,
-    bestTrades: report.bestTrades || [],
-    capital_usado: report.capital_usado || 0,
-  };
-
-
-  const summaryText = buildWeeklySummaryText(weeklyData);
-
-  const sendSmtpEmail = new Brevo.SendSmtpEmail();
-
-  sendSmtpEmail.subject = "Resumen semanal de inversión";
-  sendSmtpEmail.sender = {
-    name: "botinv",
-    email: "mauriciobarraa41@gmail.com"
-  };
-
-  sendSmtpEmail.to = [
-    { email: "josefinabotha@gmail.com", name: "zar de las finanzas" },
-    { email: "mauricio_grillo@hotmail.com", name: "mauricio" }
-  ];
-
-  sendSmtpEmail.htmlContent = alertaInversionTemplate({
-    semana_inicio: weeklyData.semana_inicio || new Date().toISOString().split('T')[0],
-    semana_fin: weeklyData.semana_fin || new Date().toISOString().split('T')[0],
-    ganancia_realizada: weeklyData.ganancia_total || 0,
-    capital_usado: weeklyData.capital_usado || 0,
-    rendimiento_pct: weeklyData.rendimiento_pct || 0,
-    operaciones: weeklyData.operaciones || 0,
-    bestTrades: weeklyData.bestTrades || [],
-  });
-
-  try {
-    const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
-    console.log("Correo enviado con éxito:", result.body.messageId);
-  } catch (error) {
-    console.error("Error al enviar correo Brevo:", error);
-  }
-}
-
-
-
-export function buildWeeklySummaryText(report: WeeklyReport): string {
+// ─── Build summary text ─────────────────────────────────────────
+function buildWeeklySummaryText(report: WeeklyReport): string {
   const {
     semana_inicio,
     semana_fin,
-    ganancia_total,
+    ganancia_realizada,
     operaciones,
-    rendimiento_pct
+    rendimiento_pct,
+    capital_usado,
+    bestTrades,
   } = report;
 
   // --- Resultado semanal
   let resultado: string;
-  if (rendimiento_pct >= 5) resultado = "muy positivo";
-  else if (rendimiento_pct >= 2) resultado = "positivo";
-  else if (rendimiento_pct > -1) resultado = "neutral";
-  else resultado = "negativo";
+  if (rendimiento_pct >= 5) resultado = "🟢 Muy positivo";
+  else if (rendimiento_pct >= 2) resultado = "🟢 Positivo";
+  else if (rendimiento_pct > -1) resultado = "🟡 Neutral";
+  else resultado = "🔴 Negativo";
 
   // --- Intensidad operativa
   let actividad: string;
@@ -142,29 +93,79 @@ export function buildWeeklySummaryText(report: WeeklyReport): string {
   // --- Conclusión estratégica
   let conclusion: string;
   if (rendimiento_pct >= 5) {
-    conclusion =
-      "Estrategia efectiva en este contexto, conviene replicar condiciones similares.";
+    conclusion = "Estrategia efectiva, conviene replicar condiciones similares.";
   } else if (rendimiento_pct >= 2) {
-    conclusion =
-      "Buen desempeño, existe margen para optimizar entradas y timing.";
+    conclusion = "Buen desempeño, margen para optimizar entradas y timing.";
   } else if (rendimiento_pct < 0) {
-    conclusion =
-      "Contexto adverso, conviene reducir riesgo y cantidad de trades.";
+    conclusion = "Contexto adverso, conviene reducir riesgo y cantidad de trades.";
   } else {
-    conclusion =
-      "Semana lateral, estrategia defensiva adecuada.";
+    conclusion = "Semana lateral, estrategia defensiva adecuada.";
   }
 
-  // --- Texto final (esto es lo que se embebe)
+  // --- Best trades section
+  let bestTradesText = "";
+  if (bestTrades && bestTrades.length > 0) {
+    bestTradesText = "\n\n📊 <b>Mejores trades:</b>\n";
+    bestTradesText += bestTrades
+      .map(
+        (t) =>
+          `  • <b>${t.activo}</b>: ${t.pnl >= 0 ? "+" : ""}${t.pnl.toFixed(2)} ARS (${t.rendimiento_pct >= 0 ? "+" : ""}${t.rendimiento_pct.toFixed(2)}%)`
+      )
+      .join("\n");
+  }
+
   return `
-Semana del ${semana_inicio} al ${semana_fin}.
-Resultado semanal ${resultado}.
-Ganancia total ${ganancia_total.toFixed(2)} ARS.
-Rendimiento acumulado ${rendimiento_pct.toFixed(2)}%.
-Cantidad de operaciones ${operaciones}.
-Nivel de actividad ${actividad}.
-Perfil de riesgo ${perfilRiesgo}.
-Contexto general: trading intradía con CEDEARs y ETFs.
-Conclusión: ${conclusion}
+📈 <b>Resumen semanal de inversión</b>
+━━━━━━━━━━━━━━━━━━━━━
+
+📅 Semana del <b>${semana_inicio}</b> al <b>${semana_fin}</b>
+
+${resultado}
+ Ganancia: <b>${ganancia_realizada.toFixed(2)} </b>
+ Rendimiento: <b>${rendimiento_pct.toFixed(2)}%</b>
+ Operaciones: <b>${operaciones}</b>
+ Capital usado: <b>${capital_usado.toFixed(2)} </b>
+ Actividad: ${actividad}
+ Perfil: ${perfilRiesgo}
+${bestTradesText}
+
+
 `.trim();
 }
+
+// ─── Send to Telegram ────────────────────────────────────────────
+export const sendTelegramMessage = async (report: WeeklyReport) => {
+  if (!TELEGRAM_BOT_TOKEN || TELEGRAM_CHAT_IDS.length === 0) {
+    console.error("❌ Configuración incompleta: Falta TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID");
+    return;
+  }
+
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+  const envios = TELEGRAM_CHAT_IDS.map(async (chatId: string) => {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: buildWeeklySummaryText(report),
+          parse_mode: "HTML",
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(`Chat ${chatId} falló: ${errorData.description}`);
+      }
+
+      return { chatId, success: true };
+    } catch (error) {
+      console.error(`Error enviando a ${chatId}:`, error instanceof Error ? error.message : error);
+      return { chatId, success: false, error };
+    }
+  });
+
+  const resultados = await Promise.allSettled(envios);
+  return resultados;
+};
