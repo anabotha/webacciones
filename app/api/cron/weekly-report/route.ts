@@ -17,8 +17,8 @@ type WeeklyReport = {
   }[];
 };
 
-const TELEGRAM_CHAT_IDS = process.env.TELEGRAM_CHAT_ID
-  ? process.env.TELEGRAM_CHAT_ID.split(',').map((id: string) => id.trim())
+const TELEGRAM_CHAT_IDS = process.env.TELEGRAM_CHAT_IDS
+  ? process.env.TELEGRAM_CHAT_IDS.split(',').map((id: string) => id.trim())
   : [];
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
