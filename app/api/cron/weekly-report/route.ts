@@ -31,7 +31,7 @@ export async function GET(request: Request) {
   const p_fin = new Date().toISOString().split("T")[0];
   const date = new Date();
   date.setDate(date.getDate() - 7);
-  const p_inicio = date.toLocaleDateString("sv-SE");
+  const p_inicio = date.toISOString().split("T")[0];
 
   try {
     const { data, error } = await supabase.rpc(
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     if (!data || data.status !== "success") {
       throw new Error("Weekly report inválido");
     }
-
+    console.log(TELEGRAM_CHAT_IDS, TELEGRAM_BOT_TOKEN)
     await sendTelegramMessage(data as WeeklyReport);
 
     return NextResponse.json({ success: true, data });
